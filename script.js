@@ -134,3 +134,4 @@ html.stop.addEventListener('click', () => {
   html.pause.classList.add('hide');
   Pomodoro.stop();
 });
+
