@@ -1,78 +1,136 @@
-const title = document.getElementById('title');
-const alert = document.getElementById('alert');
-const minutes = document.getElementById('minutes');
-const seconds = document.getElementById('seconds');
-const status = document.getElementById('status');
-const reset = document.getElementById('reset');
-const pause = document.getElementById('pause');
-const play = document.getElementById('play');
-const stop = document.getElementById('stop');
+const html = {
+  title: document.getElementById('title'),
+  alertSound: document.getElementById('alert'),
+  minutes: document.getElementById('minutes'),
+  seconds: document.getElementById('seconds'),
+  reset: document.getElementById('reset'),
+  pause: document.getElementById('pause'),
+  play: document.getElementById('play'),
+  stop: document.getElementById('stop'),
+  status: document.getElementById('status-label'),
+  counter: document.getElementById('status-counter'),
+};
 
-const Timer = (minutes, seconds, status, paused) =>({
-  minutes,
-  seconds,
-  status,
-  paused,
-});
+class Timer {
+  constructor() {
+    let minutes = 25;
+    let seconds = 0;
+    let status = 'Session';
+    let counter = { sessions: 0, breaks: 0 };
+    let interval = undefined;
+    
+    this.getStatus = () => status;
+    this.getMinutes = () => minutes;
+    this.getSeconds = () => seconds;
+    this.getFullCounter = () => counter;
+    
+    this.printTime = () => {
+      html.minutes.innerHTML = format(minutes);
+      html.seconds.innerHTML = format(seconds);
+      html.title.innerHTML = `${format(minutes)}:${format(seconds)} | ${status} (${this.getCounter()})`;
+    };
 
-const setSessionMode = () => Timer(25, 0, 'Session', false);
-const setBreakMode = () => Timer(5, 0, 'Break', false);
+    this.printStatus = () => {
+      html.status.innerHTML = status;
+      html.counter.innerHTML = this.getCounter();
+    };
 
-var clock = setSessionMode();
-var interval;
+    this.run = () => {
+      interval = setInterval(this.getTime, 1000);
+    };
 
-// Events
+    this.getTime = () => {
+      seconds = (seconds == 0) ? 59 : seconds - 1;
+      minutes = (seconds == 59) ? minutes - 1 : minutes;
+      this.printTime();
+      if (minutes == 0 && seconds == 0)
+        this.toggleStatus();
+    };
 
-play.addEventListener('click', () => {
-  interval = runTimer();
-  toggle(play);
-  toggle(pause);
-});
+    this.getCounter = () => {
+      return (status == 'Session') ? counter.sessions : counter.breaks;
+    };
 
-pause.addEventListener('click', () => { 
-  toggle(pause);
-  toggle(play);
-  clearInterval(interval);
-});
+    this.resetCounter = () => {
+      counter = { sessions: 0, breaks: 0 };
+    }
 
-reset.addEventListener('click', () => {
-  clock = (clock.status == 'Session') ? setSessionMode() : setBreakMode();
-  printTimer()
-});
+    this.pause = () => {
+      clearInterval(interval);
+      interval = undefined;
+    };
+    
+    this.reset = () => {
+      this.setSessionMode();
+      this.resetCounter();
+      this.printStatus();
+      this.printTime();
+    }
 
-stop.addEventListener('click', () =>{ 
-  clearInterval(interval);
-  clock = setSessionMode();
-  play.classList.remove('hide');
-  pause.classList.add('hide');
-  printTimer()
-});
+    this.stop = () => {
+      this.pause();
+      this.setSessionMode();
+      this.resetCounter();
+      this.printStatus();
+      this.printTime();
+    }
 
-// Funtions
+    this.setBreakMode = () => {
+      minutes = 0;
+      seconds = 5;
+      status = 'Break';
+    };
+
+    this.setSessionMode = () => {
+      minutes = 0;
+      seconds = 5;
+      status = 'Session';
+    };
+
+    this.toggleStatus = () => {
+      html.alertSound.play();
+      this.updateCounter();
+      if (status === 'Session') {
+        this.setBreakMode();
+      } else {
+        this.setSessionMode();
+      }
+      this.printStatus();
+      this.printTime();
+    };
+
+    this.updateCounter = () => {
+      if (status == 'Session') {
+        counter.sessions++;
+      } else {
+        counter.breaks++;
+      }
+    };
+  }
+}
 
 const format = n => ('0'+n).substr(('0'+n).length-2);
-const runTimer = () => setInterval(getTime, 1000);
 const toggle = element => { element.classList.toggle('hide'); };
+let Pomodoro = new Timer();
 
+html.play.addEventListener('click', () => {
+  Pomodoro.run();
+  toggle(html.play);
+  toggle(html.pause);
+});
 
-function getTime(){
-  clock.seconds = (clock.seconds == 0) ? 59 : clock.seconds-1;
-  clock.minutes = (clock.seconds == 59) ? clock.minutes-1 : clock.minutes;
-  printTimer();
-  if( clock.minutes == 0 && clock.seconds == 0 ) toggleStatus();
-}
+html.pause.addEventListener('click', () => {
+  Pomodoro.pause();
+  toggle(html.pause);
+  toggle(html.play);
+});
 
-// Toggle status
-function toggleStatus(){
-  alert.play();
-  clock = (clock.status == 'Session') ? setBreakMode() : setSessionMode();
-  status.innerHTML = clock.status;
-  console.log(clock);
-  printTimer();
-}
+html.reset.addEventListener('click', () => {
+  Pomodoro.reset();
+});
 
-const printTimer = () =>{ 
-  minutes.innerHTML = format(clock.minutes);
-  seconds.innerHTML = format(clock.seconds);
-  title.innerHTML = `${format(clock.minutes)}:${format(clock.seconds)} | ${clock.status}`;
-}
+html.stop.addEventListener('click', () => {
+  html.play.classList.remove('hide');
+  html.pause.classList.add('hide');
+  Pomodoro.stop();
+});
