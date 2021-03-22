@@ -76,13 +76,13 @@ class Timer {
     }
 
     this.setBreakMode = () => {
-      minutes = 25;
+      minutes = 5;
       seconds = 0;
       status = 'Break';
     };
 
     this.setSessionMode = () => {
-      minutes = 5;
+      minutes = 25;
       seconds = 0;
       status = 'Session';
     };
