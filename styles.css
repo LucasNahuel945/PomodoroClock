@@ -38,6 +38,25 @@ body{
   width: 50%;
 }
 
+#status-counter{
+  align-items: center;
+  background-color: white;
+  border-radius: 100%;
+  color: var(--complementary);
+  display: flex;
+  font-size: 14px;
+  height: 8px;
+  justify-content: center;
+  padding: 8px;
+  margin: 8px;
+  width: 8px;
+}
+
+#status-label{
+  font-size: 18px;
+  font-weight: 700;
+}
+
 #status,
 #timer,
 .btn-group{
@@ -66,13 +85,11 @@ body{
 
 
 #status{
+  align-items: center;
   background-color: var(--complementary);
   border-top: 0;
-  color: white;
   flex-direction: row;
-  font-size: 18px;
-  font-weight: 700;
-  justify-content: space-evenly;
+  justify-content: center;
   padding: 8px 0;
 }
 

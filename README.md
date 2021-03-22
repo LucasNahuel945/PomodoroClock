@@ -2,4 +2,4 @@
 ---
 
 ![Pomodoro Clock Screenshoot](/images/screenshoot.png)
-[Live DEMO](https://cocky-goldwasser-ccaabb.netlify.app/)
+[Live DEMO](https://pomodoroclock945.netlify.app/)
