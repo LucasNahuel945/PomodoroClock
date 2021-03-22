@@ -12,6 +12,8 @@
   box-sizing: inherit;
   padding: 0;
   margin: 0;
+  text-decoration: none;
+  list-style: none;
 }
 
 body{
@@ -23,6 +25,12 @@ body{
   font-family: var(--font);
   height: 100vh;
   justify-content: center;
+}
+
+footer{
+  position: absolute;
+  bottom: 0;
+  margin: 8px auto;
 }
 
 .pomodoro-container{
@@ -114,6 +122,22 @@ body{
 .btn:hover{ 
   background-color: white;
   color: var(--complementary);
+}
+
+.footer-link{
+  display: flex;
+  align-items: center;
+  color: white;
+  opacity: 60%;
+}
+
+.footer-link:hover{
+  opacity: 100%;
+}
+
+.fa-github-square{
+  font-size: 24px;
+  margin: 0 4px;
 }
 
 .hide{ display: none; }
